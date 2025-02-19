@@ -193,13 +193,16 @@
           <h2 class="title is-3">Abstract</h2>
           <div class="content has-text-justified">
             <p>
-              Improving generalization is a key challenge in Embodied AI, where obtaining large-scale datasets from diverse scenarios is costly.
-              Visuomotor policies trained with weak augmentations provide only marginal improvements when applied to new environments. 
-              Strong augmentations, such as random overlay, can disrupt task-relevant information and degrade performance. 
-              To overcome these challenges, we introduce \textbf{EAGLE}—an \textbf{E}fficient tr\textbf{A}ining framework for \textbf{G}enera\textbf{L}izabl\textbf{E} visuomotor policies. 
-              EAGLE enhances generalization by applying augmentation only to control-related regions using a self-supervised, control-aware mask. 
-              It also boosts training efficiency and stability by transferring knowledge from an expert to a student policy, enabling deployment in new environments without further fine-tuning. 
-              Experiments on the DMControl Generalization Benchmark and the enhanced Robot Manipulation Distraction Benchmark demonstrate the effectiveness of our approach.</p>
+              Improving generalization is one key challenge in Embodied AI,
+              where obtaining large-scale datasets across diverse scenarios is
+              costly. Traditional weak augmentations, such as cropping and flipping, are insufficient for improving a model’s performance in new
+              environments. Existing data augmentation methods often disrupt
+              task-relevant information in images, potentially degrading performance. To overcome these challenges, we introduce EAGLE—an
+              Efficient trAining framework for GeneraLizablE visuomotor policies—that improves upon existing methods by: 1) enhancing generalization by applying augmentation only to control-related regions
+              identified through a self-supervised control-aware mask; and 2)
+              improving training stability and efficiency by distilling knowledge
+              from an expert to a visuomotor student policy, which is then deployed to unseen environments without further fine-tuning. Comprehensive experiments on three domains—including the DMControl Generalization Benchmark (DMC-GB), the enhanced Robot Manipulation Distraction Benchmark (RMDB), and a long-sequential
+              drawer-opening task—validate the effectiveness of our method.
           </div>
         </div>
       </div>
