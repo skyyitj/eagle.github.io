@@ -5,7 +5,7 @@
 
   <meta charset="utf-8">
   <meta name="description"
-    content="RoboMIND: Establishing a Benchmark for Multi-embodiment Intelligence Normative Data in Robot Manipulation.">
+    content="Efficient Training of Generalizable Visuomotor Policies via Control-Aware Augmentation">
   <meta name="keywords" content="RoboMIND, Multi-embodiment Intelligence, Robot Manipulation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Efficient Training of Generalizable Visuomotor Policies via Control-Aware Augmentation</title>
@@ -34,12 +34,9 @@
   <script src="./static/js/index.js"></script>
   <style>
     .author-block {
-        display: none;
-    }
-
-    .publication-authors:hover .author-block {
         display: block;
     }
+
 </style>
 
 </head>
@@ -76,8 +73,8 @@
               Control-Aware Augmentation </h1>
             <div class="is-size-5 publication-authors">
                 <span class="team-name"><b>Beijing Institute of Technology <p style="font-size: 70%">(hover to display full author list)</p></b></span>
-                <span class="author-block">Yinuo Zhao<sup>1,∗</sup>, Kun Wu<sup>2,3,∗</sup> Tianjiao Yi<sup>2,3,∗</sup>,
-                Zhiyuan Xu<sup>1,∗,†</sup>, Zhengping Che<sup>1,∗,†</sup>,<span class="author-block"></span> Qinru Qiu<sup>1</sup>, Chi Harold Liu<sup>1</sup>
+                <span class="author-block">Yinuo Zhao<sup>1</sup>, Kun Wu<sup>2,3</sup> Tianjiao Yi<sup>2</sup>,
+                Zhiyuan Xu<sup>1</sup>, Zhengping Che<sup>1</sup>,<span class="author-block"></span> Qinru Qiu<sup>1</sup>, Chi Harold Liu<sup>1</sup>
     
                     <span class="icon">
                       <svg class="svg-inline--fa fa-envelope fa-w-16" aria-hidden="true" focusable="false"
@@ -214,18 +211,42 @@
       <div class="columns is-centered">
         <div class="column is-full-width">
           <h2 class="title is-3">Introduction</h2>
-          
-            <p> We summarize our contributions as follows:
-              • We propose an efficient training framework for generalizable
-              visuomotor policies to achieve zero-shot generalization to
-              unseen environments with visual changes.
-              • We introduce a method to derive a control-aware mask
-              within a self-supervised reconstruction structure, eliminating the need for additional labels or reward signals.
-              • To enhance training stability and efficiency, we develop a
-              strategy to learn visuomotor policies by distilling knowledge
-              from a privileged expert pre-trained on low-level environmental states.
-              • Our extensive comparative and ablation studies across three
-              benchmarks well validate the effectiveness of our method   </p>
+            <p> End-to-end visuomotor policies learn low-level controls directly
+              from high-dimensional visual inputs, yielding promising results in
+              tasks like robot manipulation [ 3 , 8 ], autonomous navigation [1],
+              and locomotion [13, 15 ]. However, visuomotor policies heavily rely
+              on visual inputs for decision-making and control, making them
+              susceptible to performance degradation when faced with changes
+              in background, distractors, or viewpoints. This deficiency cannot
+              be mitigated through reinforcement nor imitation learning alone.
+              One promising technique to reduce the impact of these visual
+              discrepancies is Data Augmentation [4, 6 , 11 , 13 , 14 ]. Weak augmen-
+              tations, like random cropping and flipping, consistently enhance
+              generalization, but with modest improvements. In contrast, strong
+              augmentations such as random conv [ 10 ] and random overlay [ 7 ],
+              boost generalization capabilities through significantly diversifying
+              the data. Nevertheless, they can indiscriminately distort the entire
+              observation space, disrupting the control-related environmental
+              structures and dynamics captured in the data. This often compli-
+              cates training and destabilizes both learning and testing phases.
+              While previous research [2, 5] has focused on augmenting specific
+              areas within the observation space, they are limited to identifying
+              dynamic objects [12] without considering their task relevance. Re-
+              cently, vision foundation models like SAM [ 9] have shown strong
+              generalization abilities. But they still require fine-tuning or human-
+              given priors to identify task-relevant regions in the observation
+              space. Therefore, automatically identifying control-related pixels
+              for generalizable visuomotor policies still remains challenging.
+              To improve generalization ability, we propose EAGLE—an ef-
+              ficient framework for generating generalizable visuomotor poli-
+              cies. EAGLE consists of two modules: 1) A control-aware augmen-
+              tation module, which identifies control-related pixels using self-
+              supervised reconstruction, and 2) A privilege-guided distillation
+              module, which extracts control knowledge from an expert agent trained with deep reinforcement learning. 
+              This approach enables zero-shot deployment in unseen environments, requiring no additional labels or reward signals. We evaluate EAGLE’s zero-shot
+              generalization ability on the DMC-GB [7]. Experimental results
+              demonstrate that EAGLE significantly improvements the general-
+              ization ability against challenging visual changes   </p>
 
           </div>
         </div>
@@ -238,7 +259,7 @@
       <!-- RoboMIND Data Analysis. -->
       <div class="columns is-centered">
         <div class="column is-full-width">
-           <h2 class="title is-3">Control-aware Data Augmentation</h2>
+           <h2 class="title is-3">method</h2>
            <div class="container is-max-desktop">
             <div class="hero-body">
               <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
@@ -247,10 +268,27 @@
               <div class="yush-div-center">
                 <img src="./static/images/context_aug_model.jpg" class="img-responsive">
               </div>
-      
               <h2 class="subtitle has-text-centered">
                 Control-aware data augmentation module.
               </h2>
+
+              <div class="content has-text-justified">
+                <p>
+                  We introduce EAGLE, an efficient training framework for generalizable visuomotor policies. The overall goal of EAGLE is to learn
+                  visuomotor policies that are invariant and capable of zero-shot
+                  generalization. EAGLE consists of two simultaneously optimized
+                  modules: a control-aware augmentation module and a privilegeguided distillation module. The former module retrieves temporal
+                  data from the replay buffer and conducts a self-supervised reconstruction task, accompanied by three auxiliary losses, to identify
+                  control-related pixels. The latter module augments the observation
+                  input and distills knowledge from a pretrained DRL expert (which
+                  processes only environment states) into the visuomotor student
+                  network (which processes only image observations). After training
+                  is completed, the visuomotor policy can be reliable deployed in
+                  complex environments with visual variations, without the need for
+                  fine-tuning or additional supervision.
+              </div>
+
+
             </div>
           </div>
         </div>
@@ -265,24 +303,40 @@
         <div class="column is-full-width">
           <h2 class="title is-3">Experiments</h2>
       <!-- Experiment  -->
-      <p> We validate \ourmethod's zero-shot generalization capabilities on two challenging benchmarks. First, 
-        we evaluate \ourmethod~using the DMC-GB~\citep{hansen2021generalization}, 
-        which tests an agent's generalization ability from simple to complex environments (Easy and Hard) with background changes. 
-        In Hard settings, the background features real-world videos that differ significantly from the training environment.
-         Each method undergoes 500k training iterations, with evaluations based only on visual inputs. Then, we introduce an enhance RMDB, 
-         building on the original benchmark \citep{bertoin2022look} that includes four tasks: Push, Reach, Hammer, and Pegbox. 
-         We incorporate distraction objects in training, and vary colors/textures in five test environments for each task. 
-         RMDB presents a greater challenge as it requires robots to develop a visuomotor policy robust to visual changes in all task-irrelevant 
-         areas. We compare \ourmethod~to several SOTA algorithms, including SVEA~\citep{hansen2021stabilizing}, TLDA~\citep{yuan2022don}, 
-         VAI~\citep{wang2021unsupervised}, SGQN~\citep{bertoin2022look} in generalization ability. Besides, we develope a strong baseline 
-         SAM+E that combined SAM~\citep{kirillov2023segment} with our privilege expert.
+      <p> Experiment settings. We evaluate EAGLE using the DMC-GB [ 7],
+        which tests an agent’s generalization ability from simple to com
+        plex environments (Easy and Hard) with background changes. In
+        Hard settings, the background features real-world videos that differ
+        significantly from the training environment. Each method under
+        goes 500k training iterations, with evaluations based only on visual
+        inputs. We compare EAGLE to several SOTA algorithms, including
+        SVEA [ 6], TLDA [ 16], VAI [ 12 ], SGQN [2 ] in generalization abil
+        ity. Besides, we develope a strong baseline SAM+E that combined
+        SAM [9] with our privilege expert.
+        Comparison results. As shown in Tab. 1, EAGLE achieves an
+        average return of 761 in Hard settings, which is 17.6% higher than
+        previous state-of-the-art method SGQN. EAGLE overcomes visual
+        distraction limitations via control-aware masks that preserves task
+        critical regions while augmenting all irrelevant areas.
+        Ablation studies. We investigate the effect of the proposed
+        control-aware augmentation and privilege-guided distillation mod
+        ules on training and generalization performance in Tab. 2. We can
+        observe that indiscriminate use of strong augmentations degrades
+        training performance, with Q+Aug achieving 160 lower average
+        returns than Q-only. Adding the mask or the Expert alone can boost
+        performance, with Q+Mask and E+Aug improving training results
+        by 12% and 32%, respectively, and achieving 93% and 126% gains in
+        Easy settings. In Hard settings, EAGLE achieves an average return
+        of 761, with a 50% and 73% improvement over Q+Maks and E+Aug,
+        respectively. This underscores the joint effect of two modules in
+        enhancing the efficient generalization of visuomotor policies.
       </p>
       <br>
 
       <div id="single-task">
         <!-- Performance on Single Tasks.. -->
          <br>
-        <h3 class="title is-4">Success Examples of ACT on Single Tasks</h3> 
+        <!-- <h3 class="title is-4">Success Examples of ACT on Single Tasks</h3>  -->
         <!-- <p> <b>Single Task Results</b>. ACT achieves an average success rate of 30.7% (Franka), 34.0% (Tien Kung), 55.3% (AgileX) and 38.0% (UR-5e).
         </p> -->
         <!-- <video width="640" height="360" controls>
@@ -294,25 +348,25 @@
               <div class="column has-text-centered">
                   <p style="font-size: 125%"><b>video1</b></p>
                   <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
-                      <source src="./static/videos/feishu1.mp4" type="video/mp4">
+                      <source src="./static/videos/video1.mp4" type="video/mp4">
                   </video>
               </div>
               <div class="column has-text-centered">
                   <p style="font-size: 125%"><b>video2</b></p>
                   <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
-                      <source src="./static/videos/feishu2.mp4" type="video/mp4">
+                      <source src="./static/videos/video2.mp4" type="video/mp4">
                   </video>
               </div>
               <div class="column has-text-centered">
                   <p style="font-size: 125%"><b>video3</b></p>
                   <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
-                      <source src="./static/videos/feishu3.mp4" type="video/mp4">
+                      <source src="./static/videos/video3.mp4" type="video/mp4">
                   </video>
               </div>
               <div class="column has-text-centered">
                 <p style="font-size: 125%"><b>video4</b></p>
                 <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
-                    <source src="./static/videos/feishu4.mp4" type="video/mp4">
+                    <source src="./static/videos/video4.mp4" type="video/mp4">
                 </video>
             </div>
 
@@ -328,17 +382,1165 @@
 
   </section>
 
+  <section class="section" id="demo">
+    <div class="container is-max-desktop">
+      <!-- Experiment  -->
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Conclusion</h2>
+      <!-- Experiment  -->
+      <p> In this paper, we address the generalization challenge of visuomotor policies in the face of visual changes. We propose an Efficient
+        trAining framework for GeneraLizablE visuomotor policies (EAGLE)
+        designed to identify control-related regions and facilitate zero-shot
+        generalization to unseen environments. EAGLE comprises two
+        jointly optimized modules: a control-aware augmentation module and a privilege-guided policy distillation module. The former
+        leverages a self-supervised reconstruction task with three auxiliary
+        losses to learn a control-aware attention mask, which distinguishes
+        task-irrelevant pixels and applies strong augmentations to minimize
+        generalization gaps. The latter distills knowledge from a pretrained
+        privileged expert into the visuomotor policies. We conduct extensive comparative and ablation studies across three challenging benchmarks to assess the efficacy of EAGLE. The experimental
+        results well validate the effectiveness of our approach.
+      </p>
+      <br>
 
+      <div id="single-task">
+        <!-- Performance on Single Tasks.. -->
+         <br>
+        <!-- <h3 class="title is-4">Success Examples of ACT on Single Tasks</h3>  -->
+        <!-- <p> <b>Single Task Results</b>. ACT achieves an average success rate of 30.7% (Franka), 34.0% (Tien Kung), 55.3% (AgileX) and 38.0% (UR-5e).
+        </p> -->
+        <!-- <video width="640" height="360" controls>
+          <source src="your-video.mp4" type="video/mp4">
+      </video> -->
+
+        <div class="content has-text-justified">
+            <div class="columns">
+              <div class="column has-text-centered">
+                  <p style="font-size: 125%"><b>video1</b></p>
+                  <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
+                      <source src="./static/videos/video1.mp4" type="video/mp4">
+                  </video>
+              </div>
+              <div class="column has-text-centered">
+                  <p style="font-size: 125%"><b>video2</b></p>
+                  <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
+                      <source src="./static/videos/video2.mp4" type="video/mp4">
+                  </video>
+              </div>
+              <div class="column has-text-centered">
+                  <p style="font-size: 125%"><b>video3</b></p>
+                  <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
+                      <source src="./static/videos/video3.mp4" type="video/mp4">
+                  </video>
+              </div>
+              <div class="column has-text-centered">
+                <p style="font-size: 125%"><b>video4</b></p>
+                <video poster="" id="" autoplay="" controls="" muted="" loop="" height="100%" playbackrate="2.0" style="border-radius: 5px;">
+                    <source src="./static/videos/video4.mp4" type="video/mp4">
+                </video>
+            </div>
+
+
+          </div>
+         
+        </div>
+
+      </div>
+      <br>
+
+
+
+  </section>
 
   <section class="section" id="BibTeX">
     <div class="container is-max-desktop content">
       <h2 class="title">BibTeX</h2>
-      <pre><code>@article{wu2024robomindbenchmarkmultiembodimentintelligence,
+      <pre><code>
+      @article{wu2024robomindbenchmarkmultiembodimentintelligence,
         title={RoboMIND: Benchmark on Multi-embodiment Intelligence Normative Data for Robot Manipulation},
         author={Kun Wu and Chengkai Hou and Jiaming Liu and Zhengping Che and Xiaozhu Ju and Zhuqin Yang and Meng Li and Yinuo Zhao and Zhiyuan Xu and Guang Yang and Zhen Zhao and Guangyu Li and Zhao Jin and Lecheng Wang and Jilei Mao and Xinhua Wang and Shichao Fan and Ning Liu and Pei Ren and Qiang Zhang and Yaoxu Lyu and Mengzhen Liu and Jingyang He and Yulin Luo and Zeyu Gao and Chenxuan Li and Chenyang Gu and Yankai Fu and Di Wu and Xingyu Wang and Sixiang Chen and Zhenyu Wang and Pengju An and Siyuan Qian and Shanghang Zhang and Jian Tang},
         journal={arXiv preprint arXiv:2412.13877},
         year={2024}
+      }
+      @book{Lam94,
+        author = {Leslie Lamport},
+        title = {{\LaTeX}: A Document Preparation System},
+        publisher = {Addison-Wesley},
+        address = {Reading, MA},
+        edition = {2nd},
+        year = {1994}
+      }
+      
+      @article{WoJe95,
+        title = {Intelligent Agents: Theory and Practice},
+        author = {Wooldridge, Michael J. and Jennings, Nicholas R.},
+        journal = {The Knowledge Engineering Review},
+        volume = {10},
+        number = {2},
+        pages = {115--152},
+        year = {1995}
+      }
+      
+      @article{GrKr96,
+        title = {Collaborative Plans for Complex Group Action},
+        author = {Grosz, Barbara J. and Kraus, Sarit},
+        journal = {Artificial Intelligence},
+        volume = {86},
+        number = {2},
+        pages = {269--357},
+        year = {1996}
+      }
+      
+      @Techreport{Har78,
+        author =       "David Harel",
+        year =         "1978",
+        title =        "Logics of programs: axiomatics and descriptive power",
+        institution =  "Massachusetts Institute of Technology",
+        type =         "MIT Research Lab Technical Report",
+        number =       "TR-200",
+        address =      "Cambridge, MA",
+        month =        "",
+        note =         ""
+      }
+      
+      @Phdthesis{Cla85,
+        author =       "Kenneth L. Clarkson",
+        year =         "1985",
+        title =        "Algorithms for Closest-Point Problems (Computational Geometry)",
+        school =       "Stanford University",
+        address =      "Palo Alto, CA",
+        note =         "UMI Order Number: AAT 8506171",
+        type =         "",
+        month =        ""
+      }
+      
+      @misc{Oba08,
+        author        = "Barack Obama",
+        year          = "2008",
+        title         = "A More Perfect Union",
+        howpublished  = "Video",
+        day           = "5",
+        url           = "http://video.google.com/videoplay?docid=6528042696351994555",
+        month         = mar,
+        lastaccessed  = "March 21, 2008",
+        note          =  ""
+      }
+      
+      @misc{Sci09,
+        author =       "Joseph Scientist",
+        year =         "2009",
+        title =        "The fountain of youth",
+        note =         "Patent No. 12345, Filed July 1st., 2008, Issued Aug. 9th., 2009",
+        url =          "",
+        howpublished = "",
+        month =        aug,
+        lastaccessed = ""
+      }
+      
+      @ArtifactDataset{AnMC13,
+       author    =  {Sam Anzaroot and Andrew McCallum},
+       title     =  {{UMass} Citation Field Extraction Dataset},
+       year      = 2013,
+       organization = {University of Massachusetts},
+       url       =
+          {http://www.iesl.cs.umass.edu/data/data-umasscitationfield},
+       lastaccessed = {May 27, 2019}
+      }
+      
+      @inproceedings{Hag1993,
+      title        = {Maintaining Discrete Probability Distributions Optimally},
+      author       = {Hagerup, Torben and Mehlhorn, Kurt and Munro, J. Ian},
+      booktitle    = {Proceedings of the 20th International Colloquium on Automata, Languages and Programming},
+      series       = {Lecture Notes in Computer Science},
+      volume       = {700},
+      pages        = {253--264},
+      year         = {1993},
+      publisher    = {Springer-Verlag},
+      address      = {Berlin}
+      }
+      
+      @Book{Knu97,
+        author =       "Donald E. Knuth",
+        title =        "The Art of Computer Programming, Vol. 1: Fundamental Algorithms",
+        publisher =    "Addison Wesley",
+        year =         "1997",
+        address =      "Reading, Massachusetts",
+        edition =      "3rd",
+        editor =       "",
+        volume =       "",
+        number =       "",
+        series =       "",
+        month =        "",
+        note =         ""
+      }
+      
+      @MASTERSTHESIS{Ani03,
+      author = {David A. Anisi},
+      title = {Optimal Motion Control of a Ground Vehicle},
+      school = {Royal Institute of Technology (KTH), Stockholm, Sweden},
+      intitution = {FOI-R-0961-SE, Swedish Defence Research Agency (FOI)},
+      year = {2003},
+      }
+      
+      
+      @article{vaswani2017attention,
+        title={Attention is all you need},
+        author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
+        journal={Advances in neural information processing systems},
+        volume={30},
+        year={2017}
+      }
+      
+      @inproceedings{makoviychuk2isaac,
+        title={Isaac Gym: High Performance GPU Based Physics Simulation For Robot Learning},
+        author={Makoviychuk, Viktor and Wawrzyniak, Lukasz and Guo, Yunrong and Lu, Michelle and Storey, Kier and Macklin, Miles and Hoeller, David and Rudin, Nikita and Allshire, Arthur and Handa, Ankur and others},
+        year={2021},
+        booktitle={Thirty-fifth Conference on Neural Information Processing Systems Datasets and Benchmarks Track}
+      }
+      
+      @article{mnih2015human,
+        title={Human-level control through deep reinforcement learning},
+        author={Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Rusu, Andrei A and Veness, Joel and Bellemare, Marc G and Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K and Ostrovski, Georg and others},
+        journal={nature},
+        volume={518},
+        number={7540},
+        pages={529--533},
+        year={2015},
+        publisher={Nature Publishing Group}
+      }
+      
+      @article{lillicrap2015continuous,
+        title={Continuous control with deep reinforcement learning},
+        author={Lillicrap, Timothy P and Hunt, Jonathan J and Pritzel, Alexander and Heess, Nicolas and Erez, Tom and Tassa, Yuval and Silver, David and Wierstra, Daan},
+        journal={arXiv preprint arXiv:1509.02971},
+        year={2015}
+      }
+      
+      @inproceedings{yun2019cutmix,
+        title={Cutmix: Regularization strategy to train strong classifiers with localizable features},
+        author={Yun, Sangdoo and Han, Dongyoon and Oh, Seong Joon and Chun, Sanghyuk and Choe, Junsuk and Yoo, Youngjoon},
+        booktitle={Proceedings of the IEEE/CVF international conference on computer vision},
+        pages={6023--6032},
+        year={2019}
+      }
+      
+      @article{zhang2017mixup,
+        title={mixup: Beyond empirical risk minimization},
+        author={Zhang, Hongyi and Cisse, Moustapha and Dauphin, Yann N and Lopez-Paz, David},
+        journal={International Conference on Learning Representations},
+        year={2017}
+      }
+      
+      @article{mazoure2020deep,
+        title={Deep reinforcement and infomax learning},
+        author={Mazoure, Bogdan and Tachet des Combes, Remi and Doan, Thang Long and Bachman, Philip and Hjelm, R Devon},
+        journal={Advances in Neural Information Processing Systems},
+        volume={33},
+        pages={3686--3698},
+        year={2020}
+      }
+      
+      @article{zhu2022masked,
+        title={Masked contrastive representation learning for reinforcement learning},
+        author={Zhu, Jinhua and Xia, Yingce and Wu, Lijun and Deng, Jiajun and Zhou, Wengang and Qin, Tao and Liu, Tie-Yan and Li, Houqiang},
+        journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+        year={2022},
+        publisher={IEEE}
+      }
+      
+      @inproceedings{nguyen2021sample,
+        title={Sample-efficient reinforcement learning representation learning with curiosity contrastive forward dynamics model},
+        author={Nguyen, Thanh and Luu, Tung M and Vu, Thang and Yoo, Chang D},
+        booktitle={2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+        pages={3471--3477},
+        year={2021},
+        organization={IEEE}
+      }
+      
+      @article{anand2019unsupervised,
+        title={Unsupervised state representation learning in atari},
+        author={Anand, Ankesh and Racah, Evan and Ozair, Sherjil and Bengio, Yoshua and C{\^o}t{\'e}, Marc-Alexandre and Hjelm, R Devon},
+        journal={Advances in neural information processing systems},
+        volume={32},
+        year={2019}
+      }
+      
+      @article{oord2018representation,
+        title={Representation learning with contrastive predictive coding},
+        author={Oord, Aaron van den and Li, Yazhe and Vinyals, Oriol},
+        journal={arXiv preprint arXiv:1807.03748},
+        year={2018}
+      }
+      
+      @article{hafner2020mastering,
+        title={Mastering atari with discrete world models},
+        author={Hafner, Danijar and Lillicrap, Timothy and Norouzi, Mohammad and Ba, Jimmy},
+        journal={International Conference on Learning Representations},
+        year={2020}
+      }
+      
+      @article{hafner2019dream,
+        title={Dream to control: Learning behaviors by latent imagination},
+        author={Hafner, Danijar and Lillicrap, Timothy and Ba, Jimmy and Norouzi, Mohammad},
+        journal={International Conference on Learning Representations},
+        year={2019}
+      }
+      
+      @inproceedings{hafner2019learning,
+        title={Learning latent dynamics for planning from pixels},
+        author={Hafner, Danijar and Lillicrap, Timothy and Fischer, Ian and Villegas, Ruben and Ha, David and Lee, Honglak and Davidson, James},
+        booktitle={International conference on machine learning},
+        pages={2555--2565},
+        year={2019},
+        organization={PMLR}
+      }
+      
+      @inproceedings{liuunlock,
+        title={Unlock the Cognitive Generalization of Deep Reinforcement Learning via Granular Ball Representation},
+        author={Liu, Jiashun and Jianye, HAO and Ma, Yi and Xia, Shuyin},
+        booktitle={International Conference on Machine Learning},
+        year={2024},
+        organization={PMLR}
+      }
+      
+      @article{yu2022mask,
+        title={Mask-based latent reconstruction for reinforcement learning},
+        author={Yu, Tao and Zhang, Zhizheng and Lan, Cuiling and Lu, Yan and Chen, Zhibo},
+        journal={Advances in Neural Information Processing Systems},
+        volume={35},
+        pages={25117--25131},
+        year={2022}
+      }
+      
+      @article{yu2021playvirtual,
+        title={Playvirtual: Augmenting cycle-consistent virtual trajectories for reinforcement learning},
+        author={Yu, Tao and Lan, Cuiling and Zeng, Wenjun and Feng, Mingxiao and Zhang, Zhizheng and Chen, Zhibo},
+        journal={Advances in Neural Information Processing Systems},
+        volume={34},
+        pages={5276--5289},
+        year={2021}
+      }
+      
+      @article{lee2020predictive,
+        title={Predictive information accelerates learning in rl},
+        author={Lee, Kuang-Huei and Fischer, Ian and Liu, Anthony and Guo, Yijie and Lee, Honglak and Canny, John and Guadarrama, Sergio},
+        journal={Advances in Neural Information Processing Systems},
+        volume={33},
+        pages={11890--11901},
+        year={2020}
+      }
+      
+      @inproceedings{feng2021survey,
+        title={A Survey of Data Augmentation Approaches for NLP},
+        author={Feng, Steven Y and Gangal, Varun and Wei, Jason and Chandar, Sarath and Vosoughi, Soroush and Mitamura, Teruko and Hovy, Eduard},
+        booktitle={Findings of the Association for Computational Linguistics: ACL-IJCNLP 2021},
+        pages={968--988},
+        year={2021}
+      }
+      
+      @article{shorten2019survey,
+        title={A survey on image data augmentation for deep learning},
+        author={Shorten, Connor and Khoshgoftaar, Taghi M},
+        journal={Journal of big data},
+        volume={6},
+        number={1},
+        pages={1--48},
+        year={2019},
+        publisher={SpringerOpen}
+      }
+      
+      @article{song2019observational,
+        title={Observational overfitting in reinforcement learning},
+        author={Song, Xingyou and Jiang, Yiding and Tu, Stephen and Du, Yilun and Neyshabur, Behnam},
+        journal={International Conference on Learning Representations},
+        year={2019}
+      }
+      
+      @inproceedings{gamrian2019transfer,
+        title={Transfer learning for related reinforcement learning tasks via image-to-image translation},
+        author={Gamrian, Shani and Goldberg, Yoav},
+        booktitle={International conference on machine learning},
+        pages={2063--2072},
+        year={2019},
+        organization={PMLR}
+      }
+      
+      @article{farebrother2018generalization,
+        title={Generalization and regularization in DQN},
+        author={Farebrother, Jesse and Machado, Marlos C and Bowling, Michael},
+        journal={arXiv preprint arXiv:1810.00123},
+        year={2018}
+      }
+      
+      @article{schwarzer2020data,
+        title={Data-efficient reinforcement learning with self-predictive representations},
+        author={Schwarzer, Max and Anand, Ankesh and Goel, Rishab and Hjelm, R Devon and Courville, Aaron and Bachman, Philip},
+        journal={International Conference on Learning Representations},
+        year={2020}
+      }
+      
+      @article{lee2020stochastic,
+        title={Stochastic latent actor-critic: Deep reinforcement learning with a latent variable model},
+        author={Lee, Alex X and Nagabandi, Anusha and Abbeel, Pieter and Levine, Sergey},
+        journal={Advances in Neural Information Processing Systems},
+        volume={33},
+        pages={741--752},
+        year={2020}
+      }
+      
+      @article{tassa2018deepmind,
+        title={Deepmind control suite},
+        author={Tassa, Yuval and Doron, Yotam and Muldal, Alistair and Erez, Tom and Li, Yazhe and Casas, Diego de Las and Budden, David and Abdolmaleki, Abbas and Merel, Josh and Lefrancq, Andrew and others},
+        journal={arXiv preprint arXiv:1801.00690},
+        year={2018}
+      }
+      
+      @article{igl2020impact,
+        title={The impact of non-stationarity on generalisation in deep reinforcement learning},
+        author={Igl, Maximilian and Farquhar, Gregory and Luketina, Jelena and Boehmer, Wendelin and Whiteson, Shimon},
+        journal={arXiv preprint arXiv:2006.05826},
+        year={2020}
+      }
+      
+      @inproceedings{zhou2020domain,
+        title={Domain adaptation through task distillation},
+        author={Zhou, Brady and Kalra, Nimit and Kr{\"a}henb{\"u}hl, Philipp},
+        booktitle={Computer Vision--ECCV 2020: 16th European Conference, Glasgow, UK, August 23--28, 2020, Proceedings, Part XXVI 16},
+        pages={664--680},
+        year={2020},
+        organization={Springer}
+      }
+      
+      @inproceedings{dosovitskiy2017carla,
+        title={CARLA: An open urban driving simulator},
+        author={Dosovitskiy, Alexey and Ros, German and Codevilla, Felipe and Lopez, Antonio and Koltun, Vladlen},
+        booktitle={Conference on robot learning},
+        pages={1--16},
+        year={2017},
+        organization={PMLR}
+      }
+      
+      @article{lee2020learning,
+        title={Learning quadrupedal locomotion over challenging terrain},
+        author={Lee, Joonho and Hwangbo, Jemin and Wellhausen, Lorenz and Koltun, Vladlen and Hutter, Marco},
+        journal={Science robotics},
+        volume={5},
+        number={47},
+        pages={eabc5986},
+        year={2020},
+        publisher={American Association for the Advancement of Science}
+      }
+      
+      @inproceedings{chen2020learning,
+        title={Learning by cheating},
+        author={Chen, Dian and Zhou, Brady and Koltun, Vladlen and Kr{\"a}henb{\"u}hl, Philipp},
+        booktitle={Conference on Robot Learning},
+        pages={66--75},
+        year={2020},
+        organization={PMLR}
+      }
+      
+      @inproceedings{czarnecki2019distilling,
+        title={Distilling policy distillation},
+        author={Czarnecki, Wojciech M and Pascanu, Razvan and Osindero, Simon and Jayakumar, Siddhant and Swirszcz, Grzegorz and Jaderberg, Max},
+        booktitle={The 22nd international conference on artificial intelligence and statistics},
+        pages={1331--1340},
+        year={2019},
+        organization={PMLR}
+      }
+      
+      @article{kakade2008complexity,
+        title={On the complexity of linear prediction: Risk bounds, margin bounds, and regularization},
+        author={Kakade, Sham M and Sridharan, Karthik and Tewari, Ambuj},
+        journal={Advances in neural information processing systems},
+        volume={21},
+        year={2008}
+      }
+      
+      
+      @article{hernandez2018data,
+        title={Data augmentation instead of explicit regularization},
+        author={Hern{\'a}ndez-Garc{\'\i}a, Alex and K{\"o}nig, Peter},
+        journal={arXiv preprint arXiv:1806.03852},
+        year={2018}
+      }
+      
+      
+      @article{hinton2015distilling,
+        title={Distilling the knowledge in a neural network},
+        author={Hinton, Geoffrey and Vinyals, Oriol and Dean, Jeff},
+        journal={arXiv preprint arXiv:1503.02531},
+        year={2015}
+      }
+      
+      @article{guan2021widening,
+        title={Widening the pipeline in human-guided reinforcement learning with explanation and context-aware data augmentation},
+        author={Guan, Lin and Verma, Mudit and Guo, Suna Sihang and Zhang, Ruohan and Kambhampati, Subbarao},
+        journal={Advances in Neural Information Processing Systems},
+        volume={34},
+        pages={21885--21897},
+        year={2021}
+      }
+      
+      @article{lee2019network,
+        title={Network randomization: A simple technique for generalization in deep reinforcement learning},
+        author={Lee, Kimin and Lee, Kibok and Shin, Jinwoo and Lee, Honglak},
+        journal={International Conference on Learning Representations},
+        year={2019}
+      }
+      
+      @article{raileanu2021automatic,
+        title={Automatic data augmentation for generalization in reinforcement learning},
+        author={Raileanu, Roberta and Goldstein, Maxwell and Yarats, Denis and Kostrikov, Ilya and Fergus, Rob},
+        journal={Advances in Neural Information Processing Systems},
+        volume={34},
+        pages={5402--5415},
+        year={2021}
+      }
+      
+      @article{yang2019single,
+        title={Single episode policy transfer in reinforcement learning},
+        author={Yang, Jiachen and Petersen, Brenden and Zha, Hongyuan and Faissol, Daniel},
+        journal={arXiv preprint arXiv:1910.07719},
+        year={2019}
+      }
+      
+      @inproceedings{peng2018sim,
+        title={Sim-to-real transfer of robotic control with dynamics randomization},
+        author={Peng, Xue Bin and Andrychowicz, Marcin and Zaremba, Wojciech and Abbeel, Pieter},
+        booktitle={2018 IEEE international conference on robotics and automation (ICRA)},
+        pages={3803--3810},
+        year={2018},
+        organization={IEEE}
+      }
+      
+      @inproceedings{tobin2017domain,
+        title={Domain randomization for transferring deep neural networks from simulation to the real world},
+        author={Tobin, Josh and Fong, Rachel and Ray, Alex and Schneider, Jonas and Zaremba, Wojciech and Abbeel, Pieter},
+        booktitle={2017 IEEE/RSJ international conference on intelligent robots and systems (IROS)},
+        pages={23--30},
+        year={2017},
+        organization={IEEE}
+      }
+      
+      @article{sohn2020fixmatch,
+        title={Fixmatch: Simplifying semi-supervised learning with consistency and confidence},
+        author={Sohn, Kihyuk and Berthelot, David and Carlini, Nicholas and Zhang, Zizhao and Zhang, Han and Raffel, Colin A and Cubuk, Ekin Dogus and Kurakin, Alexey and Li, Chun-Liang},
+        journal={Advances in neural information processing systems},
+        volume={33},
+        pages={596--608},
+        year={2020}
+      }
+      
+      @article{berthelot2019mixmatch,
+        title={Mixmatch: A holistic approach to semi-supervised learning},
+        author={Berthelot, David and Carlini, Nicholas and Goodfellow, Ian and Papernot, Nicolas and Oliver, Avital and Raffel, Colin A},
+        journal={Advances in neural information processing systems},
+        volume={32},
+        year={2019}
+      }
+      
+      @article{hendrycks2019augmix,
+        title={Augmix: A simple data processing method to improve robustness and uncertainty},
+        author={Hendrycks, Dan and Mu, Norman and Cubuk, Ekin D and Zoph, Barret and Gilmer, Justin and Lakshminarayanan, Balaji},
+        journal={arXiv preprint arXiv:1912.02781},
+        year={2019}
+      }
+      
+      @article{hendrycks2018benchmarking,
+        title={Benchmarking neural network robustness to common corruptions and surface variations},
+        author={Hendrycks, Dan and Dietterich, Thomas G},
+        journal={arXiv preprint arXiv:1807.01697},
+        year={2018}
+      }
+      
+      @article{kirk2023survey,
+        title={A Survey of Zero-shot Generalisation in Deep Reinforcement Learning},
+        author={Kirk, Robert and Zhang, Amy and Grefenstette, Edward and Rockt{\"a}schel, Tim},
+        journal={Journal of Artificial Intelligence Research},
+        volume={76},
+        pages={201--264},
+        year={2023}
+      }
+      
+      @article{hansen2020self,
+        title={Self-supervised policy adaptation during deployment},
+        author={Hansen, Nicklas and Jangir, Rishabh and Sun, Yu and Aleny{\`a}, Guillem and Abbeel, Pieter and Efros, Alexei A and Pinto, Lerrel and Wang, Xiaolong},
+        journal={arXiv preprint arXiv:2007.04309},
+        year={2020}
+      }
+      
+      @inproceedings{jiang2021prioritized,
+        title={Prioritized level replay},
+        author={Jiang, Minqi and Grefenstette, Edward and Rockt{\"a}schel, Tim},
+        booktitle={International Conference on Machine Learning},
+        pages={4940--4950},
+        year={2021},
+        organization={PMLR}
+      }
+      
+      @inproceedings{rao2020rl,
+        title={Rl-cyclegan: Reinforcement learning aware simulation-to-real},
+        author={Rao, Kanishka and Harris, Chris and Irpan, Alex and Levine, Sergey and Ibarz, Julian and Khansari, Mohi},
+        booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+        pages={11157--11166},
+        year={2020}
+      }
+      
+      @inproceedings{ferns2014bisimulation,
+        title={Bisimulation Metrics are Optimal Value Functions.},
+        author={Ferns, Norman and Precup, Doina},
+        booktitle={UAI},
+        pages={210--219},
+        year={2014}
+      }
+      
+      @inproceedings{laskin2020curl,
+        title={Curl: Contrastive unsupervised representations for reinforcement learning},
+        author={Laskin, Michael and Srinivas, Aravind and Abbeel, Pieter},
+        booktitle={International Conference on Machine Learning},
+        pages={5639--5650},
+        year={2020},
+        organization={PMLR}
+      }
+      
+      @inproceedings{yuan2022pretrained,
+      title={Pre-Trained Image Encoder for Generalizable Visual Reinforcement Learning},
+      author={Zhecheng Yuan and Zhengrong Xue and Bo Yuan and Xueqian Wang and Yi Wu and Yang Gao and Huazhe Xu},
+      booktitle={Advances in Neural Information Processing Systems},
+      editor={Alice H. Oh and Alekh Agarwal and Danielle Belgrave and Kyunghyun Cho},
+      year={2022},
+      url={https://openreview.net/forum?id=FQtku8rkp3}
+      }
+      
+      @article{kemertas2021towards,
+        title={Towards robust bisimulation metric learning},
+        author={Kemertas, Mete and Aumentado-Armstrong, Tristan},
+        journal={Advances in Neural Information Processing Systems},
+        volume={34},
+        pages={4764--4777},
+        year={2021}
+      }
+      
+      @inproceedings{liu2023robust,
+        title={Robust representation learning by clustering with bisimulation metrics for visual reinforcement learning with distractions},
+        author={Liu, Qiyuan and Zhou, Qi and Yang, Rui and Wang, Jie},
+        booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+        volume={37},
+        number={7},
+        pages={8843--8851},
+        year={2023}
+      }
+      
+      @article{zhang2020learning,
+        title={Learning invariant representations for reinforcement learning without reconstruction},
+        author={Zhang, Amy and McAllister, Rowan and Calandra, Roberto and Gal, Yarin and Levine, Sergey},
+        journal={arXiv preprint arXiv:2006.10742},
+        year={2020}
+      }
+      
+      @inproceedings{fan2022dribo,
+        title={Dribo: Robust deep reinforcement learning via multi-view information bottleneck},
+        author={Fan, Jiameng and Li, Wenchao},
+        booktitle={International Conference on Machine Learning},
+        pages={6074--6102},
+        year={2022},
+        organization={PMLR}
+      }
+      
+      @inproceedings{liu2021regularization,
+      title={Regularization Matters in Policy Optimization - An Empirical Study on Continuous Control},
+      author={Zhuang Liu and Xuanlin Li and Bingyi Kang and Trevor Darrell},
+      booktitle={International Conference on Learning Representations},
+      year={2021},
+      url={https://openreview.net/forum?id=yr1mzrH3IC}
+      }
+      
+      @article{igl2019generalization,
+        title={Generalization in reinforcement learning with selective noise injection and information bottleneck},
+        author={Igl, Maximilian and Ciosek, Kamil and Li, Yingzhen and Tschiatschek, Sebastian and Zhang, Cheng and Devlin, Sam and Hofmann, Katja},
+        journal={Advances in neural information processing systems},
+        volume={32},
+        year={2019}
+      }
+      
+      @article{zhang2018study,
+        title={A study on overfitting in deep reinforcement learning},
+        author={Zhang, Chiyuan and Vinyals, Oriol and Munos, Remi and Bengio, Samy},
+        journal={arXiv preprint arXiv:1804.06893},
+        year={2018}
+      }
+      
+      @article{srivastava2014dropout,
+        title={Dropout: a simple way to prevent neural networks from overfitting},
+        author={Srivastava, Nitish and Hinton, Geoffrey and Krizhevsky, Alex and Sutskever, Ilya and Salakhutdinov, Ruslan},
+        journal={The journal of machine learning research},
+        volume={15},
+        number={1},
+        pages={1929--1958},
+        year={2014},
+        publisher={JMLR. org}
+      }
+      
+      @article{raileanu2020ride,
+        title={Ride: Rewarding impact-driven exploration for procedurally-generated environments},
+        author={Raileanu, Roberta and Rockt{\"a}schel, Tim},
+        journal={International Conference on Learning Representations},
+        year={2020}
+      }
+      
+      @inproceedings{yarats2021improving,
+        title={Improving sample efficiency in model-free reinforcement learning from images},
+        author={Yarats, Denis and Zhang, Amy and Kostrikov, Ilya and Amos, Brandon and Pineau, Joelle and Fergus, Rob},
+        booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+        volume={35},
+        number={12},
+        pages={10674--10681},
+        year={2021}
+      }
+      
+      @inproceedings{cobbe2020leveraging,
+        title={Leveraging procedural generation to benchmark reinforcement learning},
+        author={Cobbe, Karl and Hesse, Chris and Hilton, Jacob and Schulman, John},
+        booktitle={International conference on machine learning},
+        pages={2048--2056},
+        year={2020},
+        organization={PMLR}
+      }
+      
+      @inproceedings{wang2019generalization,
+        title={On the generalization gap in reparameterizable reinforcement learning},
+        author={Wang, Huan and Zheng, Stephan and Xiong, Caiming and Socher, Richard},
+        booktitle={International Conference on Machine Learning},
+        pages={6648--6658},
+        year={2019},
+        organization={PMLR}
+      }
+      
+      @inproceedings{cobbe2019quantifying,
+        title={Quantifying generalization in reinforcement learning},
+        author={Cobbe, Karl and Klimov, Oleg and Hesse, Chris and Kim, Taehoon and Schulman, John},
+        booktitle={International Conference on Machine Learning},
+        pages={1282--1289},
+        year={2019},
+        organization={PMLR}
+      }
+      
+      @article{machado2018revisiting,
+        title={Revisiting the arcade learning environment: Evaluation protocols and open problems for general agents},
+        author={Machado, Marlos C and Bellemare, Marc G and Talvitie, Erik and Veness, Joel and Hausknecht, Matthew and Bowling, Michael},
+        journal={Journal of Artificial Intelligence Research},
+        volume={61},
+        pages={523--562},
+        year={2018}
+      }
+      @article{yang2024movie,
+        title={Movie: Visual model-based policy adaptation for view generalization},
+        author={Yang, Sizhe and Ze, Yanjie and Xu, Huazhe},
+        journal={Advances in Neural Information Processing Systems},
+        volume={36},
+        year={2024}
+      }
+      
+      @inproceedings{li2024normalization,
+        title={Normalization Enhances Generalization in Visual Reinforcement Learning},
+        author={Li, Lu and Lyu, Jiafei and Ma, Guozheng and Wang, Zilin and Yang, Zhenjie and Li, Xiu and Li, Zhiheng},
+        booktitle={Proceedings of the 23rd International Conference on Autonomous Agents and Multiagent Systems},
+        pages={1137--1146},
+        year={2024}
+      }
+      
+      @article{justesen2018illuminating,
+        title={Illuminating generalization in deep reinforcement learning through procedural level generation},
+        author={Justesen, Niels and Torrado, Ruben Rodriguez and Bontrager, Philip and Khalifa, Ahmed and Togelius, Julian and Risi, Sebastian},
+        journal={NeurIPS Workshop on Deep Reinforcement Learning Workshop},
+        year={2018}
+      }
+      
+      @article{zhang2018dissection,
+        title={A dissection of overfitting and generalization in continuous reinforcement learning},
+        author={Zhang, Amy and Ballas, Nicolas and Pineau, Joelle},
+        journal={arXiv preprint arXiv:1806.07937},
+        year={2018}
+      }
+      
+      @inproceedings{yang2023sample,
+        title={Sample efficiency of data augmentation consistency regularization},
+        author={Yang, Shuo and Dong, Yijun and Ward, Rachel and Dhillon, Inderjit S and Sanghavi, Sujay and Lei, Qi},
+        booktitle={International Conference on Artificial Intelligence and Statistics},
+        pages={3825--3853},
+        year={2023},
+        organization={PMLR}
+      }
+      @article{packer2018assessing,
+        title={Assessing generalization in deep reinforcement learning},
+        author={Packer, Charles and Gao, Katelyn and Kos, Jernej and Kr{\"a}henb{\"u}hl, Philipp and Koltun, Vladlen and Song, Dawn},
+        journal={arXiv preprint arXiv:1810.12282},
+        year={2018}
+      }
+      
+      @article{rajeswaran2017towards,
+        title={Towards generalization and simplicity in continuous control},
+        author={Rajeswaran, Aravind and Lowrey, Kendall and Todorov, Emanuel V and Kakade, Sham M},
+        journal={Advances in Neural Information Processing Systems},
+        volume={30},
+        year={2017}
+      }
+      
+      @article{hansen2021stabilizing,
+        title={Stabilizing deep q-learning with convnets and vision transformers under data augmentation},
+        author={Hansen, Nicklas and Su, Hao and Wang, Xiaolong},
+        journal={Advances in neural information processing systems},
+        volume={34},
+        pages={3680--3693},
+        year={2021}
+      }
+      
+      @inproceedings{hansen2021generalization,
+        title={Generalization in reinforcement learning by soft data augmentation},
+        author={Hansen, Nicklas and Wang, Xiaolong},
+        booktitle={2021 IEEE International Conference on Robotics and Automation (ICRA)},
+        pages={13611--13617},
+        year={2021},
+        organization={IEEE}
+      }
+      
+      @article{laskin2020reinforcement,
+        title={Reinforcement learning with augmented data},
+        author={Laskin, Misha and Lee, Kimin and Stooke, Adam and Pinto, Lerrel and Abbeel, Pieter and Srinivas, Aravind},
+        journal={Advances in neural information processing systems},
+        volume={33},
+        pages={19884--19895},
+        year={2020}
+      }
+      
+      @article{stone2021distracting,
+        title={The Distracting Control Suite--A Challenging Benchmark for Reinforcement Learning from Pixels},
+        author={Stone, Austin and Ramirez, Oscar and Konolige, Kurt and Jonschkowski, Rico},
+        journal={arXiv preprint arXiv:2101.02722},
+        year={2021}
+      }
+      
+      @inproceedings{choi2023environment,
+        title={Environment Agnostic Representation for Visual Reinforcement Learning},
+        author={Choi, Hyesong and Lee, Hunsang and Jeong, Seongwon and Min, Dongbo},
+        booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+        pages={263--273},
+        year={2023}
+      }
+      
+      @article{kirillov2023segment,
+        title={Segment anything},
+        author={Kirillov, Alexander and Mintun, Eric and Ravi, Nikhila and Mao, Hanzi and Rolland, Chloe and Gustafson, Laura and Xiao, Tete and Whitehead, Spencer and Berg, Alexander C and Lo, Wan-Yen and others},
+        journal={arXiv preprint arXiv:2304.02643},
+        year={2023}
+      }
+      
+      
+      @inproceedings{yuan2022don,
+        title={Don’t touch what matters: Task-aware lipschitz data augmentationfor visual reinforcement learning},
+        author={Yuan, Z and Ma, G and Mu, Y and Xia, B and Yuan, B and Wang, X and Luo, P and Xu, H},
+        booktitle={Proceedings of the Thirty-First International Joint Conference on Artificial Intelligence, Vienna, 23-29 July 2022},
+        year={2022},
+        organization={International Joint Conferences on Artificial Intelligence.}
+      }
+      
+      
+      @inproceedings{fu2021learning,
+        title={Learning task informed abstractions},
+        author={Fu, Xiang and Yang, Ge and Agrawal, Pulkit and Jaakkola, Tommi},
+        booktitle={International Conference on Machine Learning},
+        pages={3480--3491},
+        year={2021},
+        organization={PMLR}
+      }
+      
+      @article{bertoin2022look,
+        title={Look where you look! Saliency-guided Q-networks for visual RL tasks},
+        author={Bertoin, David and Zouitine, Adil and Zouitine, Mehdi and Rachelson, Emmanuel},
+        journal={Advances in neural information processing systems},
+        year={2022}
+      }
+      
+      @inproceedings{yarats2021mastering,
+        title={Mastering Visual Continuous Control: Improved Data-Augmented Reinforcement Learning},
+        author={Yarats, Denis and Fergus, Rob and Lazaric, Alessandro and Pinto, Lerrel},
+        booktitle={Deep RL Workshop NeurIPS 2021},
+        year={2021}
+      }
+      
+      @article{kostrikov2020image,
+        title={Image augmentation is all you need: Regularizing deep reinforcement learning from pixels},
+        author={Kostrikov, Ilya and Yarats, Denis and Fergus, Rob},
+        journal={International Conference on Learning Representations},
+        year={2020}
+      }
+      
+      @inproceedings{tobin2017domain,
+        title={Domain randomization for transferring deep neural networks from simulation to the real world},
+        author={Tobin, Josh and Fong, Rachel and Ray, Alex and Schneider, Jonas and Zaremba, Wojciech and Abbeel, Pieter},
+        booktitle={2017 IEEE/RSJ international conference on intelligent robots and systems (IROS)},
+        pages={23--30},
+        year={2017},
+        organization={IEEE}
+      }
+      
+      @inproceedings{mehta2020active,
+        title={Active domain randomization},
+        author={Mehta, Bhairav and Diaz, Manfred and Golemo, Florian and Pal, Christopher J and Paull, Liam},
+        booktitle={Conference on Robot Learning},
+        pages={1162--1176},
+        year={2020},
+        organization={PMLR}
+      }
+      @inproceedings{yu2021visual,
+        title={Visual-locomotion: Learning to walk on complex terrains with vision},
+        author={Yu, Wenhao and Jain, Deepali and Escontrela, Alejandro and Iscen, Atil and Xu, Peng and Coumans, Erwin and Ha, Sehoon and Tan, Jie and Zhang, Tingnan},
+        booktitle={5th Annual Conference on Robot Learning},
+        year={2021}
+      }
+      
+      @inproceedings{kalashnikov2018scalable,
+        title={Scalable deep reinforcement learning for vision-based robotic manipulation},
+        author={Kalashnikov, Dmitry and Irpan, Alex and Pastor, Peter and Ibarz, Julian and Herzog, Alexander and Jang, Eric and Quillen, Deirdre and Holly, Ethan and Kalakrishnan, Mrinal and Vanhoucke, Vincent and others},
+        booktitle={Conference on Robot Learning},
+        pages={651--673},
+        year={2018},
+        organization={PMLR}
+      }
+      
+      @article{banino2018vector,
+        title={Vector-based navigation using grid-like representations in artificial agents},
+        author={Banino, Andrea and Barry, Caswell and Uria, Benigno and Blundell, Charles and Lillicrap, Timothy and Mirowski, Piotr and Pritzel, Alexander and Chadwick, Martin J and Degris, Thomas and Modayil, Joseph and others},
+        journal={Nature},
+        volume={557},
+        number={7705},
+        pages={429--433},
+        year={2018},
+        publisher={Nature Publishing Group UK London}
+      }
+      
+      @inproceedings{chen2020adversarial,
+        title={Adversarial feature training for generalizable robotic visuomotor control},
+        author={Chen, Xi and Ghadirzadeh, Ali and Bj{\"o}rkman, M{\aa}rten and Jensfelt, Patric},
+        booktitle={2020 IEEE International Conference on Robotics and Automation (ICRA)},
+        pages={1142--1148},
+        year={2020},
+        organization={IEEE}
+      }
+      
+      @article{ma2022comprehensive,
+        title={A Comprehensive Survey of Data Augmentation in Visual Reinforcement Learning},
+        author={Ma, Guozheng and Wang, Zhen and Yuan, Zhecheng and Wang, Xueqian and Yuan, Bo and Tao, Dacheng},
+        journal={arXiv preprint arXiv:2210.04561},
+        year={2022}
+      }
+      
+      @inproceedings{wu2021self,
+        title={Self-supervised attention-aware reinforcement learning},
+        author={Wu, Haiping and Khetarpal, Khimya and Precup, Doina},
+        booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+        volume={35},
+        pages={10311--10319},
+        year={2021}
+      }
+      
+      @inproceedings{woo2018cbam,
+        title={Cbam: Convolutional block attention module},
+        author={Woo, Sanghyun and Park, Jongchan and Lee, Joon-Young and Kweon, In So},
+        booktitle={Proceedings of the European conference on computer vision (ECCV)},
+        pages={3--19},
+        year={2018}
+      }
+      
+      @inproceedings{salter2021attention,
+        title={Attention-privileged reinforcement learning},
+        author={Salter, Sasha and Rao, Dushyant and Wulfmeier, Markus and Hadsell, Raia and Posner, Ingmar},
+        booktitle={Conference on Robot Learning},
+        pages={394--408},
+        year={2021},
+        organization={PMLR}
+      }
+      
+      @inproceedings{wang2021unsupervised,
+        title={Unsupervised visual attention and invariance for reinforcement learning},
+        author={Wang, Xudong and Lian, Long and Yu, Stella X},
+        booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+        pages={6677--6687},
+        year={2021}
+      }
+      
+      @article{ravi2024sam,
+        title={Sam 2: Segment anything in images and videos},
+        author={Ravi, Nikhila and Gabeur, Valentin and Hu, Yuan-Ting and Hu, Ronghang and Ryali, Chaitanya and Ma, Tengyu and Khedr, Haitham and R{\"a}dle, Roman and Rolland, Chloe and Gustafson, Laura and others},
+        journal={arXiv preprint arXiv:2408.00714},
+        year={2024}
+      }
+      
+      @inproceedings{fan2021secant,
+        title = 	 {SECANT: Self-expert cloning for zero-shot generalization of visual policies},
+        author =       {Fan, Linxi and Wang, Guanzhi and Huang, De-An and Yu, Zhiding and Fei-Fei, Li and Zhu, Yuke and Anandkumar, Animashree},
+        booktitle = 	 {International Conference on Machine Learning},
+        pages = 	 {3088--3099},
+        year = 	 {2021},
+        publisher =    {PMLR},
+      }
+      
+      @article{huang2022spectrum,
+        title={Spectrum Random Masking for Generalization in Image-based Reinforcement Learning},
+        author={Huang, Yangru and Peng, Peixi and Zhao, Yifan and Chen, Guangyao and Tian, Yonghong},
+        journal={Advances in Neural Information Processing Systems},
+        volume={35},
+        pages={20393--20406},
+        year={2022}
+      }
+      
+      
+      @article{pinto2017asymmetric,
+        title={Asymmetric actor critic for image-based robot learning},
+        author={Pinto, Lerrel and Andrychowicz, Marcin and Welinder, Peter and Zaremba, Wojciech and Abbeel, Pieter},
+        journal={arXiv preprint arXiv:1710.06542},
+        year={2017}
+      }
+      
+      @inproceedings{zhang2021end,
+        title={End-to-end urban driving by imitating a reinforcement learning coach},
+        author={Zhang, Zhejun and Liniger, Alexander and Dai, Dengxin and Yu, Fisher and Van Gool, Luc},
+        booktitle={Proceedings of the IEEE/CVF international conference on computer vision},
+        pages={15222--15232},
+        year={2021}
+      }
+      
+      @inproceedings{wang2022vrl3,
+        title={VRL3: A Data-Driven Framework for Visual Deep Reinforcement Learning},
+        author={Wang, Che and Luo, Xufang and Ross, Keith and Li, Dongsheng},
+        booktitle={Conference on Neural Information Processing Systems},
+        year={2022},
+        url={https://openreview.net/forum?id=NjKAm5wMbo2}
+      }
+      
+      @inproceedings{yuanpre,
+        title={Pre-Trained Image Encoder for Generalizable Visual Reinforcement Learning},
+        author={Yuan, Zhecheng and Xue, Zhengrong and Yuan, Bo and Wang, Xueqian and Wu, Yi and Gao, Yang and Xu, Huazhe},
+        booktitle={Advances in Neural Information Processing Systems},
+        year={2022}
+      }
+      
+      @inproceedings{haldar2023watch,
+        title={Watch and match: Supercharging imitation with regularized optimal transport},
+        author={Haldar, Siddhant and Mathur, Vaibhav and Yarats, Denis and Pinto, Lerrel},
+        booktitle={Conference on Robot Learning},
+        pages={32--43},
+        year={2023},
+        organization={PMLR}
+      }
+      
+      @inproceedings{haarnoja2018soft,
+        title={Soft actor-critic: Off-policy maximum entropy deep reinforcement learning with a stochastic actor},
+        author={Haarnoja, Tuomas and Zhou, Aurick and Abbeel, Pieter and Levine, Sergey},
+        booktitle={International conference on machine learning},
+        pages={1861--1870},
+        year={2018},
+        organization={PMLR}
+      }
+      
+      @article{schulman2017proximal,
+        title={Proximal policy optimization algorithms},
+        author={Schulman, John and Wolski, Filip and Dhariwal, Prafulla and Radford, Alec and Klimov, Oleg},
+        journal={arXiv preprint arXiv:1707.06347},
+        year={2017}
+      }
+      
+      @inproceedings{singh2021parrot,
+        title={Parrot: Data-Driven Behavioral Priors for Reinforcement Learning},
+        author={Singh, Avi and Liu, Huihan and Zhou, Gaoyue and Yu, Albert and Rhinehart, Nicholas and Levine, Sergey},
+        booktitle={International Conference on Learning Representations},
+      year={2021},
+      }
+      
+      @article{kumar2020conservative,
+        title={Conservative q-learning for offline reinforcement learning},
+        author={Kumar, Aviral and Zhou, Aurick and Tucker, George and Levine, Sergey},
+        journal={Advances in Neural Information Processing Systems},
+        volume={33},
+        pages={1179--1191},
+        year={2020}
+      }
+      
+      @inproceedings{zhao2022cadre,
+        title={Cadre: A cascade deep reinforcement learning framework for vision-based autonomous urban driving},
+        author={Zhao, Yinuo and Wu, Kun and Xu, Zhiyuan and Che, Zhengping and Lu, Qi and Tang, Jian and Liu, Chi Harold},
+        booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+        volume={36},
+        pages={3481--3489},
+        year={2022}
+      }
+      
+      @inproceedings{toromanoff2020end,
+        title={End-to-end model-free reinforcement learning for urban driving using implicit affordances},
+        author={Toromanoff, Marin and Wirbel, Emilie and Moutarde, Fabien},
+        booktitle={Proceedings of the IEEE/CVF conference on computer vision and pattern recognition},
+        pages={7153--7162},
+        year={2020}
+      }
+      
+      @inproceedings{yarats2021image,
+      title={Image Augmentation Is All You Need: Regularizing Deep Reinforcement Learning from Pixels},
+      author={Denis Yarats and Ilya Kostrikov and Rob Fergus},
+      booktitle={International Conference on Learning Representations},
+      year={2021},
+      }
+      
+      @article{galashov2022data,
+        title={Data augmentation for efficient learning from parametric experts},
+        author={Galashov, Alexandre and Merel, Josh S and Heess, Nicolas},
+        journal={Advances in Neural Information Processing Systems},
+        volume={35},
+        pages={31484--31496},
+        year={2022}
+      }
+      
+      @article{kulkarni2019unsupervised,
+        title={Unsupervised learning of object keypoints for perception and control},
+        author={Kulkarni, Tejas D and Gupta, Ankush and Ionescu, Catalin and Borgeaud, Sebastian and Reynolds, Malcolm and Zisserman, Andrew and Mnih, Volodymyr},
+        journal={Advances in neural information processing systems},
+        volume={32},
+        year={2019}
+      }
+      
+      @article{jangir2022look,
+        title={Look closer: Bridging egocentric and third-person views with transformers for robotic manipulation},
+        author={Jangir, Rishabh and Hansen, Nicklas and Ghosal, Sambaran and Jain, Mohit and Wang, Xiaolong},
+        journal={IEEE Robotics and Automation Letters},
+        volume={7},
+        number={2},
+        pages={3046--3053},
+        year={2022},
+        publisher={IEEE}
+      }
+      
+      
+      @article{zhou2017places,
+        title={Places: A 10 million image database for scene recognition},
+        author={Zhou, Bolei and Lapedriza, Agata and Khosla, Aditya and Oliva, Aude and Torralba, Antonio},
+        journal={IEEE transactions on pattern analysis and machine intelligence},
+        volume={40},
+        number={6},
+        pages={1452--1464},
+        year={2017},
+        publisher={IEEE}
+      }
+      
+      @article{ahn2022can,
+        title={Do as i can, not as i say: Grounding language in robotic affordances},
+        author={Ahn, Michael and Brohan, Anthony and Brown, Noah and Chebotar, Yevgen and Cortes, Omar and David, Byron and Finn, Chelsea and Fu, Chuyuan and Gopalakrishnan, Keerthana and Hausman, Karol and others},
+        journal={arXiv preprint arXiv:2204.01691},
+        year={2022}
       }</code></pre>
+
+
+
+
     </div>
     <br>
   </section>
