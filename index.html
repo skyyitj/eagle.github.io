@@ -42,6 +42,8 @@
 </head>
 
 <body>
+
+
   <section class="hero">
     <div class="hero-body">
       <div class="container is-max-desktop">
@@ -50,7 +52,7 @@
             <h1 class="title is-1 publication-title">Efficient Training of Generalizable Visuomotor Policies via
               Control-Aware Augmentation </h1>
             <div class="is-size-5 publication-authors">
-                <span class="team-name"><b>Beijing Institute of Technology <p style="font-size: 70%">(hover to display full author list)</p></b></span>
+                <span class="team-name"><b>Beijing Institute of Technology <p style="font-size: 70%"></p></b></span>
                 <span class="author-block">Yinuo Zhao<sup>1</sup>, Kun Wu<sup>2</sup> Tianjiao Yi<sup>1</sup>,
                 Zhiyuan Xu<sup>3</sup>, Zhengping Che<sup>3</sup>,<span class="author-block"></span> Qinru Qiu<sup>2</sup>, Chi Harold Liu<sup>1</sup>,Jian Tang<sup>3</sup>
     
@@ -166,26 +168,25 @@
           <h2 class="title is-3">Introduction</h2>
             <p> End-to-end visuomotor policies learn low-level controls directly
               from high-dimensional visual inputs, yielding promising results in
-              tasks like robot manipulation [ 3 , 8 ], autonomous navigation [1],
-              and locomotion [13, 15 ]. However, visuomotor policies heavily rely
+              tasks like robot manipulation , autonomous navigation ,
+              and locomotion. However, visuomotor policies heavily rely
               on visual inputs for decision-making and control, making them
               susceptible to performance degradation when faced with changes
               in background, distractors, or viewpoints. This deficiency cannot
               be mitigated through reinforcement nor imitation learning alone.
               One promising technique to reduce the impact of these visual
-              discrepancies is Data Augmentation [4, 6 , 11 , 13 , 14 ]. Weak augmen-
-              tations, like random cropping and flipping, consistently enhance
+              discrepancies is Data Augmentation. Weak augmentations, like random cropping and flipping, consistently enhance
               generalization, but with modest improvements. In contrast, strong
-              augmentations such as random conv [ 10 ] and random overlay [ 7 ],
+              augmentations such as random conv and random overlay,
               boost generalization capabilities through significantly diversifying
               the data. Nevertheless, they can indiscriminately distort the entire
               observation space, disrupting the control-related environmental
               structures and dynamics captured in the data. This often compli-
               cates training and destabilizes both learning and testing phases.
-              While previous research [2, 5] has focused on augmenting specific
+              While previous research has focused on augmenting specific
               areas within the observation space, they are limited to identifying
-              dynamic objects [12] without considering their task relevance. Re-
-              cently, vision foundation models like SAM [ 9] have shown strong
+              dynamic objects without considering their task relevance. Re-
+              cently, vision foundation models like SAM have shown strong
               generalization abilities. But they still require fine-tuning or human-
               given priors to identify task-relevant regions in the observation
               space. Therefore, automatically identifying control-related pixels
@@ -197,7 +198,7 @@
               supervised reconstruction, and 2) A privilege-guided distillation
               module, which extracts control knowledge from an expert agent trained with deep reinforcement learning. 
               This approach enables zero-shot deployment in unseen environments, requiring no additional labels or reward signals. We evaluate EAGLE’s zero-shot
-              generalization ability on the DMC-GB [7]. Experimental results
+              generalization ability on the DMC-GB . Experimental results
               demonstrate that EAGLE significantly improvements the general-
               ization ability against challenging visual changes   </p>
 
@@ -211,35 +212,37 @@
 
       <!-- RoboMIND Data Analysis. -->
   <section class="section" id="demo">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-          <h2 class="title is-3">method</h2>
-          <div class="container is-max-desktop">
-          <div class="hero-body">
-            <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
-              <source src="./static/videos/teaser.mp4" type="video/mp4">
-            </video> -->
-            <div class="yush-div-center">
-              <img src="./static/images/context_aug_model.jpg" class="img-responsive">
-            </div>
-            <h2 class="subtitle has-text-centered">
-              Control-aware data augmentation module.
-            </h2>
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+            <h2 class="title is-3">method</h2>
+            <div class="container is-max-desktop">
+            <div class="hero-body">
+              <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
+                <source src="./static/videos/teaser.mp4" type="video/mp4">
+              </video> -->
+              <div class="yush-div-center">
+                <img src="./static/images/context_aug_model.jpg" class="img-responsive" style="width: 75%; height: auto;">
+              </div>
+              <h2 class="subtitle has-text-centered">
+                Control-aware data augmentation module.
+              </h2>
 
-            <div class="content has-text-justified">
-              <p>
-                We introduce EAGLE, an efficient training framework for generalizable visuomotor policies. The overall goal of EAGLE is to learn
-                visuomotor policies that are invariant and capable of zero-shot
-                generalization. EAGLE consists of two simultaneously optimized
-                modules: a control-aware augmentation module and a privilegeguided distillation module. The former module retrieves temporal
-                data from the replay buffer and conducts a self-supervised reconstruction task, accompanied by three auxiliary losses, to identify
-                control-related pixels. The latter module augments the observation
-                input and distills knowledge from a pretrained DRL expert (which
-                processes only environment states) into the visuomotor student
-                network (which processes only image observations). After training
-                is completed, the visuomotor policy can be reliable deployed in
-                complex environments with visual variations, without the need for
-                fine-tuning or additional supervision.
+              <div class="content has-text-justified">
+                <p>
+                  We introduce EAGLE, an efficient training framework for generalizable visuomotor policies. The overall goal of EAGLE is to learn
+                  visuomotor policies that are invariant and capable of zero-shot
+                  generalization. EAGLE consists of two simultaneously optimized
+                  modules: a control-aware augmentation module and a privilegeguided distillation module. The former module retrieves temporal
+                  data from the replay buffer and conducts a self-supervised reconstruction task, accompanied by three auxiliary losses, to identify
+                  control-related pixels. The latter module augments the observation
+                  input and distills knowledge from a pretrained DRL expert (which
+                  processes only environment states) into the visuomotor student
+                  network (which processes only image observations). After training
+                  is completed, the visuomotor policy can be reliable deployed in
+                  complex environments with visual variations, without the need for
+                  fine-tuning or additional supervision.
+              </div>
             </div>
           </div>
         </div>
@@ -255,16 +258,16 @@
         <div class="column is-full-width">
           <h2 class="title is-3">Experiments</h2>
       <!-- Experiment  -->
-        <p> Experiment settings. We evaluate EAGLE using the DMC-GB [ 7],
+        <p> Experiment settings. We evaluate EAGLE using the DMC-GB,
           which tests an agent’s generalization ability from simple to com
           plex environments (Easy and Hard) with background changes. In
           Hard settings, the background features real-world videos that differ
           significantly from the training environment. Each method under
           goes 500k training iterations, with evaluations based only on visual
           inputs. We compare EAGLE to several SOTA algorithms, including
-          SVEA [ 6], TLDA [ 16], VAI [ 12 ], SGQN [2 ] in generalization abil
+          SVEA , TLDA , VAI, SGQN in generalization abil
           ity. Besides, we develope a strong baseline SAM+E that combined
-          SAM [9] with our privilege expert.
+          SAM with our privilege expert.
           Comparison results. 
 
         </p>
@@ -371,8 +374,6 @@
         <!-- <video width="640" height="360" controls>
           <source src="your-video.mp4" type="video/mp4">
       </video> -->
-
-
       </div>
       <br>
 
@@ -385,7 +386,7 @@
   <footer class="footer">
     <div class="container">
       <div class="content has-text-centered">
-        <a class="icon-link" href="https://arxiv.org/abs/2412.13877">
+        <a class="icon-link" href="https://arxiv.org/abs/2401.09258">
           <i class="fas fa-file-pdf"></i>
         </a>
         <!-- <a class="icon-link" href="https://x-humanoid-robomind.github.io/" class="external-link" disabled>
